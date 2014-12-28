@@ -7,7 +7,7 @@
     "Ruben Seyferth <ruben.seyferth@gmail.com>"
   ],
   "description": "Simple WAMP v1 (WebSocket Application Messaging Protocol) Javascript client-side implementation",
-  "main": "build/wampy.js",
+  "main": "src/wampy.js",
   "keywords": [
     "websocket",
     "wamp"
