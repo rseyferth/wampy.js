@@ -1,0 +1,23 @@
+{
+  "name": "WampyV1.js",
+  "version": "0.1.1",
+  "homepage": "https://github.com/rseyferth/wampy.js",
+  "authors": [
+    "Konstantin Burkalev <KSDaemon@ya.ru>",
+    "Ruben Seyferth <ruben.seyferth@gmail.com>"
+  ],
+  "description": "Simple WAMP v1 (WebSocket Application Messaging Protocol) Javascript client-side implementation",
+  "main": "build/wampy.js",
+  "keywords": [
+    "websocket",
+    "wamp"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
