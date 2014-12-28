@@ -260,7 +260,8 @@
 		this._options = {
 			autoReconnect: true,
 			reconnectInterval: 2 * 1000,
-			maxRetries: 25
+			maxRetries: 25,
+			debug: false
 		};
 
 		/**
@@ -318,6 +319,13 @@
 		return obj;
 	};
 
+	Wampy.prototype._log = function(msg) {
+		if (this._options.debug === true || this._options.debug === 'console') {
+			console.log(msg);
+		}
+	};
+
+
 	/* Internal websocket related functions */
 
 	Wampy.prototype._send = function (msg) {
@@ -343,14 +351,15 @@
 	};
 
 	Wampy.prototype._wsOnOpen = function () {
-		console.log("[wampy] websocket connected");
+		
+		this._log("Websocket connected");
 
 		//TODO Make subprotocol check
 	};
 
 	Wampy.prototype._wsOnClose = function (event) {
 		var self = this;
-		console.log("[wampy] websocket disconnected");
+		this._log("Websocket disconnected");
 
 		this._cache.welcome = false;
 
@@ -370,7 +379,7 @@
 	Wampy.prototype._wsOnMessage = function (event) {
 		var data, i, uri;
 
-		console.log("[wampy] websocket message received: ", event.data);
+		this._log("Websocket message received: ", event.data);
 
 		data = JSON.parse(event.data);
 
@@ -417,7 +426,7 @@
 	};
 
 	Wampy.prototype._wsOnError = function (error) {
-		console.log("[wampy] websocket error");
+		this._log("Websocket error");
 
 		if (this._options.onError) {
 			this._options.onError();
@@ -425,7 +434,7 @@
 	};
 
 	Wampy.prototype._wsReconnect = function () {
-		console.log("[wampy] websocket reconnecting...");
+		this._log("Websocket reconnecting...");
 
 		if (this._options.onReconnect) {
 			this._options.onReconnect();
