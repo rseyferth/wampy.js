@@ -265,6 +265,21 @@
 		};
 
 		/**
+		 * Event listeners
+		 * @type {Object}
+		 * @private
+		 */
+		this._eventListeners = {
+			error: [],
+			log: [],
+			data: [],
+			connect: [],
+			disconnect: [],
+			reconnecting: []
+		};
+
+
+		/**
 		 * Prefixes hash-table for instance
 		 * @type {prefixMap}
 		 * @private
@@ -323,6 +338,7 @@
 		if (this._options.debug === true || this._options.debug === 'console') {
 			console.log(msg);
 		}
+		this.trigger('log', [msg]);
 	};
 
 
@@ -353,6 +369,7 @@
 	Wampy.prototype._wsOnOpen = function () {
 		
 		this._log("Websocket connected");
+		this.trigger('connect');
 
 		//TODO Make subprotocol check
 	};
@@ -360,8 +377,9 @@
 	Wampy.prototype._wsOnClose = function (event) {
 		var self = this;
 		this._log("Websocket disconnected");
-
+		this.trigger('disconnect');
 		this._cache.welcome = false;
+
 
 		// Automatic reconnection
 		if (this._isInitialized && this._options.autoReconnect && this._cache.reconnectingAttempts < this._options.maxRetries) {
@@ -382,6 +400,7 @@
 		this._log("Websocket message received: ", event.data);
 
 		data = JSON.parse(event.data);
+		this.trigger('data', [data]);
 
 		switch (data[0]) {
 			case WAMP_SPEC.TYPE_ID_WELCOME:
@@ -425,8 +444,28 @@
 
 	};
 
+
+
+	/**
+	 * Wampy Events
+	 */
+	Wampy.prototype.on = function(eventName, callback) {
+		this._eventListeners[eventName].push(callback);
+		return this;		
+	};
+	Wampy.prototype.trigger = function(eventName, args) {
+
+		for (var q = 0; q < this._eventListeners[eventName].length; q++) {
+			this._eventListeners[eventName][q].call(this, args);
+		}
+	};
+
+
+
 	Wampy.prototype._wsOnError = function (error) {
 		this._log("Websocket error");
+
+		this.trigger('error', [error]);
 
 		if (this._options.onError) {
 			this._options.onError();
@@ -435,6 +474,7 @@
 
 	Wampy.prototype._wsReconnect = function () {
 		this._log("Websocket reconnecting...");
+		this.trigger('reconnecting');
 
 		if (this._options.onReconnect) {
 			this._options.onReconnect();
@@ -596,5 +636,6 @@
 	};
 
 	window.Wampy = Wampy;
+
 
 })(window);
